@@ -1,11 +1,39 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
+
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldPlaySound: false,
+      shouldSetBadge: false,
+      shouldShowAlert: true,
+    };
+  },
+});
 
 export default function App() {
+  const scheduleNotificationHandler = () => {
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Test Notification',
+        body: 'This is a text notification',
+        data: { userName: 'Amit' },
+      },
+      trigger: {
+        seconds: 5,
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Button
+        title='Schedule Notification'
+        onPress={scheduleNotificationHandler}
+      />
+      <StatusBar style='auto' />
     </View>
   );
 }

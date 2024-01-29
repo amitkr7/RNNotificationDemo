@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
 import * as Notifications from 'expo-notifications';
+import { useEffect } from 'react';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -14,6 +15,25 @@ Notifications.setNotificationHandler({
 });
 
 export default function App() {
+  useEffect(() => {
+    const notiRecivedSubscription =
+      Notifications.addNotificationReceivedListener((notification) => {
+        const userName = notification.request.content.data.userName;
+        console.log(userName);
+      });
+
+    const notiResponseSubscription =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const userName = response.notification.request.content.data.userName;
+        console.log(userName);
+      });
+
+    return () => {
+      notiRecivedSubscription.remove();
+      notiResponseSubscription.remove();
+    };
+  }, []);
+
   const scheduleNotificationHandler = () => {
     Notifications.scheduleNotificationAsync({
       content: {
@@ -22,7 +42,7 @@ export default function App() {
         data: { userName: 'Amit' },
       },
       trigger: {
-        seconds: 5,
+        seconds: 3,
       },
     });
   };
